@@ -14,7 +14,7 @@ if [ -z "${WEBDRIVE_USERNAME}" ]; then
     WEBDRIVE_USERNAME="-"
 fi
 if [ -n "${WEBDRIVE_PASSWORD_FILE}" ]; then
-    WEBDRIVE_PASSWORD=$(read ${WEBDRIVE_PASSWORD_FILE})
+    WEBDRIVE_PASSWORD=$(read "${WEBDRIVE_PASSWORD_FILE}")
 fi
 if [ -z "${WEBDRIVE_PASSWORD}" ]; then
     echo "No password specified, is this on purpose?"
@@ -44,21 +44,21 @@ if [ -n "$(env | grep "DAVFS2_")" ]; then
 fi
 
 # Create destination directory if it does not exist.
-if [ ! -d $DEST ]; then
-    mkdir -p $DEST
+if [ ! -d "$DEST" ]; then
+    mkdir -p "$DEST"
 fi
 
 # Deal with ownership
 if [ $OWNER -gt 0 ]; then
     adduser webdrive -u $OWNER -D -G users
-    chown webdrive $DEST
+    chown webdrive "$DEST"
 fi
 
 # Mount and verify that something is present. davfs2 always creates a lost+found
 # sub-directory, so we can use the presence of some file/dir as a marker to
 # detect that mounting was a success. Execute the command on success.
-mount -t davfs $WEBDRIVE_URL $DEST -o uid=$OWNER,gid=users,dir_mode=755,file_mode=755
-if [ -n "$(ls -1A $DEST)" ]; then
+mount -t davfs "$WEBDRIVE_URL" "$DEST" -o uid=$OWNER,gid=users,dir_mode=755,file_mode=755
+if [ -n "$(ls -1A "$DEST")" ]; then
     echo "Mounted $WEBDRIVE_URL onto $DEST"
     exec "$@"
 else
